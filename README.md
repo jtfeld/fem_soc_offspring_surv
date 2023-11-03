@@ -41,7 +41,7 @@ Feldblum, J. T., Walker, K. K., Stanton, M. A., Lonsdorf, E. V., Murray, C. M., 
 
 Recommended citation for this dataset:
 
-Feldblum, J. T., Walker, K. K., Stanton, M. A., Lonsdorf, E. V., Murray, C. M., Pusey, A. E. (2023) Socially integrated female chimpanzees have lower offspring mortality. (doi tbd)
+Feldblum, J. T., Walker, K. K., Stanton, M. A., Lonsdorf, E. V., Murray, C. M., Pusey, A. E. (2023) Data and code for: Socially integrated female chimpanzees have lower offspring mortality. (doi tbd)
 
 DATA SPECIFIC INFORMATION
 
