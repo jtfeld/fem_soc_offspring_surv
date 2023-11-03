@@ -1,5 +1,7 @@
 # Male Sociality and Offspring Survival
 
+[![DOI](https://zenodo.org/badge/713942640.svg)](https://zenodo.org/doi/10.5281/zenodo.10070424)
+
 Last updated: Nov 3, 2023
 
 Code and data for:
