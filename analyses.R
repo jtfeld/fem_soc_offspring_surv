@@ -18,7 +18,7 @@ library(lavaanPlot)
 
 # ================ offspring survival to 1 ===============
 
-infsurv_soc_1 = readRDS(file = "infsurv_1_anon.rds")
+infsurv_soc_1 = readRDS(file = "infsurv_1_anon.rds") 
 
 sapply(infsurv_soc_1, function(x) sum(is.na(x)))
 
