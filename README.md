@@ -1,4 +1,4 @@
-# Male Sociality and Offspring Survival
+# Female Sociality and Offspring Survival
 
 [![DOI](https://zenodo.org/badge/713942640.svg)](https://zenodo.org/doi/10.5281/zenodo.10070424)
 
