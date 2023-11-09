@@ -368,7 +368,7 @@ temp %>%
 # --------------------- dyad-level analysis -------------------------------
 
 # dataset of each mother's top bond in the year leading up to giving birth:
-readRDS("dyadic_data.rds")
+topmomdyads = readRDS("dyadic_data.rds")
 
 # dyadic sociality index vs maternal characteristics and kinship status with the other female
 dyad_mod = lmer(dsi_time_ratio ~ matkin + momelo + mom_age_z + mom_age_z2 + (1|id1), data = topmomdyads)
