@@ -5,8 +5,6 @@ library(gombedatabase)
 library(ggplot2)
 library(lmerTest)
 library(sjPlot) 
-library(coxme)
-library(survminer)
 library(tidyr)
 library(MuMIn)
 library(performance)
@@ -170,6 +168,45 @@ infsurv_soc_1 %>%
   xlab("Maternal age") + ylab("") +
   labs(tag = "B") + 
   labs(color = "Maternal kin present?", shape = "Offspring died", size = "Offspring died", alpha = "Offspring died")
+
+
+# ---------- analysis of only fems with no fem kin present (surv. to 1) --------
+
+head(infsurv_soc_1)
+
+summary(fit_soc_csi_f_ratio)
+
+temp = 
+  infsurv_soc_1 %>% 
+  mutate(gmapres = grandmaingrp > 0,
+         daughtpres = daughters11 > 0,
+         matsispres = replace_na(matsisters11, 0) > 0,
+         femkinpres = gmapres + daughtpres + matsispres > 0,
+         totfemkin = gmapres + daughtpres + matsispres
+  )
+
+temp %>% count(totfemkin)
+
+temp %>% 
+  filter(totfemkin > 0) %>% 
+  count(momid)
+
+temp2 = temp %>% filter(totfemkin == 0)
+
+table(temp2$survto1)
+
+tempsocmod2 = glm(survto1 ~
+                    sex2
+                  + nfems
+                  + csi_f_ratio
+                  , data = temp2, family = binomial, na.action = na.fail)
+
+plot_model(tempsocmod2)
+
+plot_model(tempsocmod2, type = "pred", terms = "csi_f_ratio [all]", 
+               show.data = T, title = "") + # , colors = "aqua"
+  xlab("Maternal CSI with other females") + ylab("Predicted prob. of offspring survival to 1")#+
+
 
 
 # ------------------- sociality vs kin presence --------------------------
@@ -452,6 +489,38 @@ AICc(fit_soc_5_csi_f_ratio, fit_soc_5_time_f_ratio, fit_soc_5_grmrate_f_ratio, n
   arrange(AICc) %>%
   round(3) # once again model with CSI-F fits better than its component parts
 
+# ------------------- analysis of only fems with no fem kin present age 5 --------
+
+head(infsurv_soc_5)
+
+summary(fit_soc_5_csi_f_ratio)
+
+temp = 
+  infsurv_soc_5 %>% 
+  mutate(gmapres = grandmaingrp > 0,
+         daughtpres = daughters11 > 0,
+         matsispres = replace_na(matsisters11, 0) > 0,
+         femkinpres = gmapres + daughtpres + matsispres > 0,
+         totfemkin = gmapres + daughtpres + matsispres
+  )
+
+temp %>% count(totfemkin)
+
+temp2 = temp %>% filter(totfemkin == 0)
+
+table(temp2$survto5)
+
+tempsocmod2 = glm(survto5 ~
+                    sex2
+                  + csi_f_ratio
+                  , data = temp2, family = binomial, na.action = na.fail)
+
+summary(tempsocmod2)
+
+plot_model(tempsocmod2)
+
+plot_model(tempsocmod2, type = "pred", terms = "csi_f_ratio [all]", show.data = T)
+
 # ----------------- path analysis survival to age 5 ----------------------------------
 
 head(infsurv_soc_5)
@@ -478,3 +547,79 @@ labels2 = c(csi_f_ratio = "CSI-F", matkin = "Kin presence", mom_age_z = "Mat. ag
 lavaanPlot(model = fit_path2, coefs = T, sig = .05, labels = labels2, 
            node_options = list( fontname = "Arial"), 
            edge_options = list(color = "grey", fontname = "Arial"))
+
+
+# ----------- dyadic bonds vs. offspring survival (survival to 1) -----------------
+
+csi_vs_dsi = readRDS("dyadic_data_surv.rds")
+
+# scaling sociality predictors in all models to make effect sizes more comparable:
+
+# original best-fit model (using CSI-F)
+fit_soc_csi_scaled = 
+  glm(survto1 ~ 
+        sex2 
+      + nfems 
+      + scale(csi_f_ratio)
+      , family = binomial
+      , data = csi_vs_dsi, na.action = na.fail)
+
+# strength of strongest bond (based on grooming time):
+fit_soc_dsi_time_1 = 
+  glm(survto1 ~ 
+        sex2 
+      + nfems 
+      + scale(top_dsi_time_ratio)
+      , family = binomial
+      , data = csi_vs_dsi, na.action = na.fail)
+
+# strength of 3 strongest bonds (based on grooming time):
+fit_soc_dsi_time_3 = 
+  glm(survto1 ~ 
+        sex2 
+      + nfems 
+      + scale(top3_dsi_time_ratio)
+      , family = binomial
+      , data = csi_vs_dsi, na.action = na.fail)
+
+# strength of strongest bond (based on grooming rate):
+fit_soc_dsi_rate_1 = 
+  glm(survto1 ~ 
+        sex2 
+      + nfems 
+      + scale(top_dsi_rate_ratio)
+      , family = binomial
+      , data = csi_vs_dsi, na.action = na.fail)
+
+# strength of 3 strongest bonds (based on grooming rate):
+fit_soc_dsi_rate_3 = 
+  glm(survto1 ~ 
+        sex2 
+      + nfems 
+      + scale(top3_dsi_rate_ratio)
+      , family = binomial
+      , data = csi_vs_dsi, na.action = na.fail)
+
+# model comparisons:
+AICc(fit_soc_csi_scaled,
+     fit_soc_dsi_rate_1,
+     fit_soc_dsi_rate_3,
+     fit_soc_dsi_time_1, 
+     fit_soc_dsi_time_3) %>% 
+  mutate(delta = AICc - min(AICc),
+         weight = MuMIn::Weights(AICc)) %>% 
+  arrange(AICc) %>%
+  round(2) 
+
+# summary(fit_soc_csi_scaled)
+# summary(fit_soc_dsi_rate_1)
+# summary(fit_soc_dsi_rate_3)
+# summary(fit_soc_dsi_time_1)
+# summary(fit_soc_dsi_time_3)
+
+# estimates:
+tab_model(fit_soc_csi_scaled)
+tab_model(fit_soc_dsi_rate_1)
+tab_model(fit_soc_dsi_rate_3)
+tab_model(fit_soc_dsi_time_1)
+tab_model(fit_soc_dsi_time_3)

@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/713942640.svg)](https://zenodo.org/doi/10.5281/zenodo.10070424)
 
-Last updated: Nov 3, 2023
+Last updated: Aug 15, 2024
 
 Code and data for:
 
@@ -51,9 +51,9 @@ Contained are the files:
 
 analyses.R
 
-Uses the datafiles: infsurv_1_anon.rds, infsurv_5_anon.rds, dyadic_data.rds
+Uses the datafiles: infsurv_1_anon.rds, infsurv_5_anon.rds, dyadic_data.rds, dyadic_data_surv.rds
 
-And produces results depicted in: Tables 1, 2, S1, S2, & S3; Figures 1, 2, S1, S2, & S3
+And produces results depicted in: Tables 1, 2, S1, S2, S3, S4; Figures 1, 2, S1, S2, S3, & S4
 
 
 All analyses were conducted in R and all plots were produced in R - see manuscript for packages and versions used.
